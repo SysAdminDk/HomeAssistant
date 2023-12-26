@@ -1,2 +1,3 @@
-# HomeAssistant
-my varius home assistant hacks
+### Home Assistant
+Repository of my files used in Home Assistant
+
