@@ -32,9 +32,10 @@ https://www.ebay.com/sch/i.html?_from=R40&_trksid=p2334524.m570.l1313&_nkw=Pulse
   
 ### The PSA3000 is just what I needed for Home Assistant.  
   
-I ended up with ordering one of this cool little box, Pulse Secure PSA3000 Security Appliance Firewall, and got it deliverd for less than $150.  
-It is based on a Supermicro X10SBA-L motherboard with the Intel Celeron J1900 that can handle 8 GB of memory, and the case have room for a couple of SSD disks for data storage (No Raid), and room for a pcie card.  
-There is another version of that motherboard X10SBA with more SATA and mSATA, but for just running a couple of VMs the L version is more than enouph.  
+I ended up with ordering one of this cool little box, Pulse Secure PSA3000 Security Appliance Firewall, and got one deliverd for less than $150.  
+It is based on a Supermicro X10SBA-L motherboard with the Intel Celeron J1900 that can handle 8 GB of memory, the case have room for a couple of disks (No Raid), if the extra network card is removed, a pcie card.  
+There is another version of that motherboard X10SBA with more SATA and mSATA, but for just running a couple of VMs the L version is just fine.  
+The case is a custom SuperChassis 503L-200B, if access to the other onboard network, a little customization is needed.  
   
 ![PSA3000](https://github.com/SysAdminDk/HomeAssistant/blob/main/Virtual%20Environment/images/PSA3000.png?raw=true)
   
