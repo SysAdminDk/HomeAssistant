@@ -12,9 +12,9 @@ Lots of the "1L" machine options that is a great for running Home Assistant, som
 Any cheap one with an Intel I3 with 8Gb and some SSD space are more thatn sufficient.  
 https://www.servethehome.com/tag/tinyminimicro/
   
-Also, lots of posts out there about using the new N100-based machines, there is more than enough power.
-They are unfortunately quite expensive, and I cannot find any rack-mount kits (January 2024)
-Sure all of the options above can be put on a shelf in the rack that is not rack-mount in my book.
+Also, lots of posts out there about using the new N100-based machines, there is more than enough power.  
+They are unfortunately quite expensive, and I cannot find any rack-mount kits (January 2024)  
+Sure all of the options above can be put on a shelf in the rack that is not rack-mount in my book.  
   
 Then I found an older post on ServerBuilds.net where they are using older network/email/firewall/security Appliances to run pfSense or ONSense.  
 https://forums.serverbuilds.net/t/guide-spice-up-your-rack-with-these-stylish-sexy-chassis-for-your-pfsense-build/5273
