@@ -4,19 +4,20 @@ After some network issues, I have decided to have my Home Assistant server runni
 Latency hasn’t been an issue, but if there is no internet, then the automation will stop working, and I don’t want to have a backup internet connection when it is only the HA server that needs to be moved home.  
 
 I have been looking for various options.  
-Changes to my Dream Machine SE, to allow HA to run in a Docker, but the previous times I have tried that, something will always break when updates are done on the UDM SE.  
+  
+1. Changes to my Dream Machine SE, to allow HA to run in a Docker, but the previous times I have tried that, something will always break when updates are done on the UDM SE.  
 The latest version of this option can be found here, use with caution.  
 https://github.com/unifi-utilities/unifios-utilities/tree/main/nspawn-container
   
-Lots of the "1L" machine options that is a great for running Home Assistant, some of them also can be fitted in a rackmount kit.  
+2. Lots of the "1L" machine options that is a great for running Home Assistant, some of them also can be fitted in a rackmount kit.  
 Any cheap one with an Intel I3 with 8Gb and some SSD space are more thatn sufficient.  
 https://www.servethehome.com/tag/tinyminimicro/
   
-Also, lots of posts out there about using the new N100-based machines, there is more than enough power.  
+3. Also, lots of posts out there about using the new N100-based machines, there is more than enough power.  
 They are unfortunately quite expensive, and I cannot find any rack-mount kits (January 2024)  
 Sure all of the options above can be put on a shelf in the rack that is not rack-mount in my book.  
   
-Then I found an older post on ServerBuilds.net where they are using older network/email/firewall/security Appliances to run pfSense or ONSense.  
+4. Then I found an older post on ServerBuilds.net where they are using older network/email/firewall/security Appliances to run pfSense or ONSense.  
 https://forums.serverbuilds.net/t/guide-spice-up-your-rack-with-these-stylish-sexy-chassis-for-your-pfsense-build/5273
   
 Which got me thinking, I realy wanted a true rackmount server, if there were IPMI (OOBM) that is always a nice feature to have.  
