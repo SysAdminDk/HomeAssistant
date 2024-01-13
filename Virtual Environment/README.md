@@ -1,9 +1,10 @@
 ### Home Assistant Server
 
-After some network issues, I have decided to have my Home Assistant server running locally, moving it away from my colocated server.  
-Latency hasn’t been an issue, but if there is no internet, then the automation will stop working, and I don’t want to have a backup internet connection when it is only the HA server that needs to be moved home.  
+After some Internet Provider network issues lately, the need to have my Home Assistant server running locally, became a requirement.  
+Latency to my colocated server, hasn’t been an issue, but if there is no internet, then the automations will stop working.  
+I don’t want to pay montly for a a backup internet connection when it is only the HA server that have to be avalible.  
 
-I have been looking for various options.  
+I Started looking for various options.  
   
 1. Making changes to my Dream Machine SE, allowing HA and more to run in Docker, but the previous times I have tried that, something always breaks on updates the UDM SE.  
 The latest version of this option can be found here, use with caution.  
@@ -23,19 +24,19 @@ https://forums.serverbuilds.net/t/guide-spice-up-your-rack-with-these-stylish-se
   
   
 ### Requirements   
-That got me thinking about the requirements.  
+That got me thinking about the actual requirements.  
   
-1. 1U Rackmount server (Short Depth)  
+1. 1U Rackmount server (Short Depth, no more than 35 cm)  
 2. CPU and Memory to run required services for Home Assistant.  
-3. Front IO  
-4. Lowpower (Under 20W)  
-5. IPMI / ILO / IDrac, somekind of Out Off Band Management is nice feature.  
+3. Lowpower. (Preferable under 20W)  
+4. Front IO, will be a nice feature.  
+5. IPMI / ILO / IDrac, somekind of Out Off Band Management will be a nice feature.  
 
 I then found an Ebay seller that have lots of 1U rack servers based on the Supermicro CSE-512 case.  
-Unfortunately that case is a little to deep for my network rack, and the seller doesn't ship to Denmark, I dont know anybody in Germany that could be used as a proxy the purchase.  
+Unfortunately that case is a little to deep for my network rack (45 cm), and the seller doesn't ship to Denmark.  
 https://www.ebay.com/sch/i.html?item=276181252711&rt=nc&_trksid=p4429486.m3561.l161211&_ssn=first-colo  
   
-After that I figured it must be based on the Supermicro CSE-505 (Front I/O) or Supermicro CSE-504 (Rear I/O)
+After that I found that it must be based on the Supermicro CSE-505 (Front I/O) or Supermicro CSE-504 (Rear I/O)
 Browsing Ebay for CSE-504/505 based servers leed me to the Pulse Secure PSA3000/5000 Security Appliance Firewall.  
 The PSA3000 is cheap 1U and there are multiple avalible on EBay.  
 https://www.ebay.com/sch/i.html?_from=R40&_trksid=p2334524.m570.l1313&_nkw=Pulse+secure+PSA3000&_sacat=0&_odkw=PSA3000&_osacat=0  
