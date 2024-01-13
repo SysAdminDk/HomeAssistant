@@ -29,3 +29,11 @@ All of my searched ended up with this cool little box, Pulse Secure PSA3000 Secu
 Which is based on the Intel Celeron J1900 that can handle 8 GB of memory, and the case have room for a couple of SSD disks for data storage (No Raid), and room for a pcie card
 
 ![PSA3000](https://github.com/SysAdminDk/HomeAssistant/blob/main/Virtual%20Environment/images/PSA3000.png?raw=true)
+
+
+I have decided to run Home Assistant as a regular VM and for that reason decided to install Proxmox Virtual Environment.
+How to prepare and install proxmox can be found here.
+https://www.proxmox.com/en/proxmox-virtual-environment/get-started
+
+To monitor power consumption of the host, have have put a Athom Smart plug infront of the PSU, and with full load I cannot get it ower 15W
+
