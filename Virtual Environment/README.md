@@ -22,7 +22,8 @@ Sure most of the options above can also be put on a shelf in the rack that is no
 https://forums.serverbuilds.net/t/guide-spice-up-your-rack-with-these-stylish-sexy-chassis-for-your-pfsense-build/5273  
   
 Which got me thinking, I realy wanted a true rackmount server, if there were IPMI (OOBM) that is always a nice feature to have.  
-I found an Ebay seller that have lots of 1U rack servers based on the Supermicro CSE-512 case, unfortunately the seller doesn't ship to Denmark, and I dont know anybody in Germany that could be used as a proxy the purchase.  
+I then found an Ebay seller that have lots of 1U rack servers based on the Supermicro CSE-512 case.  
+Unfortunately the seller doesn't ship to Denmark, and I dont know anybody in Germany that could be used as a proxy the purchase.  
 https://www.ebay.com/sch/i.html?item=276181252711&rt=nc&_trksid=p4429486.m3561.l161211&_ssn=first-colo  
 
 Browsing Ebay for Supermicro CSE-512 based servers leed me to the Pulse Secure PSA3000/5000 Security Appliance Firewall, and the PSA3000 is cheap 1U and there are multiple avalible on EBay.  
