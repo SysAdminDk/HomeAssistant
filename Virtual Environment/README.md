@@ -20,19 +20,29 @@ Sure most of the options above can also be put on a shelf in the rack that is no
   
 4. Then I found an older post on ServerBuilds.net where they are using older network/email/firewall/security Appliances to run pfSense or ONSense.  
 https://forums.serverbuilds.net/t/guide-spice-up-your-rack-with-these-stylish-sexy-chassis-for-your-pfsense-build/5273  
+
+   
+That got me thinking about the requirements.  
   
-Which got me thinking, I realy wanted a true rackmount server, if there were IPMI (OOBM) that is always a nice feature to have.  
+1. 1U Rackmount server (Short Depth)  
+2. CPU and Memory to run required services for Home Assistant.  
+3. Front IO  
+4. Lowpower (Under 20W)  
+5. IPMI / ILO / IDrac, somekind of Out Off Band Management is nice feature.  
+
 I then found an Ebay seller that have lots of 1U rack servers based on the Supermicro CSE-512 case.  
-Unfortunately the seller doesn't ship to Denmark, and I dont know anybody in Germany that could be used as a proxy the purchase.  
+Unfortunately that case is a little to deep for my network rack, and the seller doesn't ship to Denmark, I dont know anybody in Germany that could be used as a proxy the purchase.  
 https://www.ebay.com/sch/i.html?item=276181252711&rt=nc&_trksid=p4429486.m3561.l161211&_ssn=first-colo  
 
-Browsing Ebay for Supermicro CSE-512 based servers leed me to the Pulse Secure PSA3000/5000 Security Appliance Firewall, and the PSA3000 is cheap 1U and there are multiple avalible on EBay.  
+After that I figured it must be based on the Supermicro CSE-503 (Front I/O) or Supermicro CSE-504 (Rear I/O)
+Browsing Ebay for CSE-503/504 based servers leed me to the Pulse Secure PSA3000/5000 Security Appliance Firewall.  
+The PSA3000 is cheap 1U and there are multiple avalible on EBay.  
 https://www.ebay.com/sch/i.html?_from=R40&_trksid=p2334524.m570.l1313&_nkw=Pulse+secure+PSA3000&_sacat=0&_odkw=PSA3000&_osacat=0  
 
   
 ### The PSA3000 is just what I needed for Home Assistant.  
   
-I ended up with ordering one of this cool little box, Pulse Secure PSA3000 Security Appliance Firewall, and got one deliverd for less than $150.  
+I ended up with ordering one of this cool little box, and got one deliverd for less than $150.  
 It is based on a Supermicro X10SBA-L motherboard with the Intel Celeron J1900 that can handle 8 GB of memory, the case have room for a couple of disks (No Raid), if the extra network card is removed, a pcie card.  
 There is another version of that motherboard X10SBA with more SATA and mSATA, but for just running a couple of VMs the L version is just fine.  
 The case is a custom SuperChassis 503L-200B, if access to the other onboard network, a little customization is needed.  
