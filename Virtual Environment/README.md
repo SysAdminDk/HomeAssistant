@@ -9,13 +9,14 @@ I have been looking for various options.
 The latest version of this option can be found here, use with caution.  
 https://github.com/unifi-utilities/unifios-utilities/tree/main/nspawn-container  
   
-2. Lots of the "1L" machine options that is a great for running Home Assistant, some of them also can be fitted in a rackmount kit.  
+2. The "1L" machines thats great for running Home Assistant, and more, some of them also can be fitted in a rackmount kit.  
 Any cheap one with an Intel I3 with 8Gb and 80GB SSD space are more than sufficient.  
 https://www.servethehome.com/tag/tinyminimicro/  
   
-3. Also, lots of posts out there about using the new N100-based machines.  
-They are unfortunately quite expensive, and I cannot find any rack-mount kits (January 2024)  
-Sure all of the options above can be put on a shelf in the rack that is not rack-mount in my book.  
+3. Found lots of posts out there about using the new N100-based machines.  
+Unfortunately I cannot find any rack-mount kits. (January 2024)  
+  
+Sure most of the options above can also be put on a shelf in the rack that is not rack-mount in my book.
   
 4. Then I found an older post on ServerBuilds.net where they are using older network/email/firewall/security Appliances to run pfSense or ONSense.  
 https://forums.serverbuilds.net/t/guide-spice-up-your-rack-with-these-stylish-sexy-chassis-for-your-pfsense-build/5273  
