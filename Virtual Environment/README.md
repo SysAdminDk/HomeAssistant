@@ -28,7 +28,7 @@ https://www.ebay.com/sch/i.html?item=276181252711&rt=nc&_trksid=p4429486.m3561.l
 All of my searched ended up with this cool little box, Pulse Secure PSA3000 Security Appliance Firewall.
 Which is based on the Intel Celeron J1900 that can handle 8 GB of memory, and the case have room for a couple of SSD disks for data storage (No Raid), and room for a pcie card
 
-![PSA3000](https://raw.githubusercontent.com/SysAdminDk/EspHome/main/IR%20-%20Heating%20Meter%20Reader/images/Esp12f-IR.png)
+![PSA3000](https://raw.githubusercontent.com/SysAdminDk/HomeAssistant/blob/main/Virtual%20Environment/images/PSA3000.png)
 
 
 
