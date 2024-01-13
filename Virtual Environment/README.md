@@ -5,7 +5,7 @@ Latency hasn’t been an issue, but if there is no internet, then the automation
 
 I have been looking for various options.  
   
-1. Making changes to my Dream Machine SE, to allow HA to run in a Docker, but the previous times I have tried that, something always breaks on updates the UDM SE.  
+1. Making changes to my Dream Machine SE, allowing HA and more to run in Docker, but the previous times I have tried that, something always breaks on updates the UDM SE.  
 The latest version of this option can be found here, use with caution.  
 https://github.com/unifi-utilities/unifios-utilities/tree/main/nspawn-container  
   
