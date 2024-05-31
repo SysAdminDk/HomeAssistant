@@ -1,7 +1,7 @@
 ![image](https://github.com/SysAdminDk/Development/assets/96570455/fbc79f14-da38-4325-b77a-372e91be8e39)
 
 
-# Repurposed Pulse Secure PSA300.  
+# Repurposed Pulse Secure PSA3000.  
 Intel(R) Celeron(R) CPU J1900  
 8 GiB memory   
 One 250Gb SSD for OS and VM's  

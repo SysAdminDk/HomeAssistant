@@ -69,30 +69,29 @@ On PVE Host : IoT-01 add the 2Tb backup disk to PBS-01.
 `qm set 101 -scsi2 /dev/disk/by-id/ata-WDC_?????????????????????????`  
    
    
-### Replica Disk
+### Replica Disk ( Has been changed, need to document )
 I use SSHFS to map a Virtual disk image on my UDM-SE to the PBS server.  
    
 On UDM-SE : Create "Replica" volume.  
 I have a 14Tb drive and only need about 10Tb for Protect.  
 > Enable SSH on UDM-SE, not part of this "guide"   
    
-  - `mkdir /volume1/pbs-replica`
-  - `mkdir /volume1/pbs-replica/mount`
+#  - `mkdir /volume1/pbs-replica`
+#  - `mkdir /volume1/pbs-replica/mount`
   
   - `truncate /volume1/pbs-replica/disk-image.raw -s 1T`
   - `mke2fs -t ext4 -F /volume1/pbs-replica/disk-image.raw`
-  - `vi /etc/fstab`  
-    `/volume1/pbs-replica/disk-image.raw    /volume1/pbs-replica/mount  ext4    rw,relatime`
-  - `mount image.raw`
-  - `systemctl daemon-reload`
+#  - `vi /etc/fstab`  
+#    `/volume1/pbs-replica/disk-image.raw    /volume1/pbs-replica/mount  ext4    rw,relatime`
+#  - `mount image.raw`
+#  - `systemctl daemon-reload`
   
+#  - Verify with mount output.
+#    /volume1/pbs-replica/disk-image.raw on /volume1/pbs-replica/mount type ext4 (rw,relatime)
   
-  - Verify with mount output.
-    /volume1/pbs-replica/disk-image.raw on /volume1/pbs-replica/mount type ext4 (rw,relatime)
-  
-    `df -h | grep pbs-replica`   
-    Filesystem                         Size  Used Avail Use% Mounted on  
-    /dev/loop1                         xxxT  xxxG  xxxG  xx% /volume1/pbs-replica/mount  
+#    `df -h | grep pbs-replica`   
+#    Filesystem                         Size  Used Avail Use% Mounted on  
+#    /dev/loop1                         xxxT  xxxG  xxxG  xx% /volume1/pbs-replica/mount  
   
   
 #### If there ever is a need to EXPAND the image.
