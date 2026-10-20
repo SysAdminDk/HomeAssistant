@@ -1,6 +1,6 @@
 # Export Your Own Historical Data from Watts On
 
-> **Unofficial guide for Windows and PowerShell.** Tested in October 2026, this method uses Android emulators to retrieve the local SQLite database used by the Watts On app. It is intended as a workaround until Watts On potentially offers a direct export feature.
+> **Unofficial guide for Windows and PowerShell.** Tested in 2026, this method uses Android emulators to retrieve the local SQLite database used by the Watts On app. It is intended as a workaround until Watts On potentially offers a direct export feature.
 
 This guide explains how to retrieve **your own** Watts On data, including historical electricity, water, and district heating measurements. You will obtain a local copy of the app's database that you can inspect or use with other tools.
 
@@ -8,7 +8,7 @@ This guide explains how to retrieve **your own** Watts On data, including histor
 
 ## Overview
 
-We use **two Android emulators**, each serving a different purpose:
+I used **two Android emulators**, each serving a different purpose:
 
 | Emulator | System image | Purpose |
 | --- | --- | --- |
@@ -21,6 +21,9 @@ Play Store emulator images normally do not allow `adb root`. Google APIs images 
 
 - Windows with **PowerShell 5.1**.
 - **Android Studio**, Android Emulator, and Android SDK Platform-Tools (`adb.exe`).
+  [Android Studio](https://developer.android.com/studio)
+  [Android SDK Platform-Tools](https://developer.android.com/tools/releases/platform-tools)
+
 - A Google account for the Play Store.
 - Access to your own **Watts On** account and the relevant utility provider credentials.
 - Enough free disk space for the emulators and database extraction.
@@ -51,9 +54,9 @@ $Adb = Join-Path $env:LOCALAPPDATA 'Android\Sdk\platform-tools\adb.exe'
    | Architecture | **x86_64** |
 
 5. Finish creating the device and start the emulator.
-6. Sign in to the **Google Play Store** using your Google account.
+6. Sign in to the **Google Play Store** using an Google account.
 7. Search for **Watts On** and install it.
-8. Open Watts On, sign in using your own credentials (for example, those for Aalborg Forsyning), and let the app synchronize.
+8. Open Watts On, sign in using your credentials, and let the app synchronize.
 
 > In our test, a Pixel 10 running Android 17 encountered Play Store sign-in difficulties, so we used a Pixel 7 with Android 13 instead. This was an observation from our test, not a confirmed general Android 17 issue.
 
@@ -89,7 +92,7 @@ foreach ($Entry in $Paths) {
 Get-ChildItem -Path $Destination -Filter '*.apk' | Select-Object Name, Length
 ```
 
-Our test produced these four files:
+The download produced these four files:
 
 ```text
 base.apk
