@@ -261,6 +261,26 @@ The result is a **SQLite database**, not a ready-made CSV export. You can open i
 
 The schema and table names depend on the Watts On version. This guide does not modify the measurements or include a generic CSV exporter, since that would first require examining the tables and their meaning.
 
+## 10. Export Electricity, Water and District Heating to CSV (Optional)
+
+If you prefer spreadsheets or your own analysis tools, you can export consumption records **without Grafana**. Download [`Export-WattsCSV.ps1`](Export-WattsCSV.ps1) from this repository and place it in the same directory as `sqlite3.exe` (or provide the full SQLite executable path).
+
+Run from PowerShell:
+
+```powershell
+.\Export-WattsCSV.ps1 -Database "$Standalone" -OutputPath "$env:USERPROFILE\Downloads\WattsCSV"
+```
+
+The script produces three files:
+
+| File | Source table | Exported fields |
+| --- | --- | --- |
+| `electricity.csv` | `electricityConsumptions` | `deviceId`, `startDate`, `endDate`, `value`, `alwaysOnValue` |
+| `water.csv` | `waterConsumptions` | `deviceId`, `startDate`, `endDate`, `value`, `measuredQuality` |
+| `heating.csv` | `heatingConsumptions` | `deviceId`, `startDate`, `endDate`, `value`, `volume`, `measuredQuality` |
+
+The export preserves the original timestamps (ISO 8601, UTC) and raw numeric values. It excludes forecast-only electricity rows where `value = -1`, and includes only water/heating rows marked `MEASURED` with nonnegative `value`. This is a **measured-consumption subset**, not a complete raw-table export. Other data quality states and forecasts are intentionally omitted. The units of `value`, `volume`, and `alwaysOnValue` have **not yet been independently confirmed** from the database schema; do not assume units without checking your provider's data. The script keeps `deviceId` to distinguish multiple meters. **CSV files may contain sensitive meter identifiers and consumption patterns; do not commit them to Git.**
+  
 ### Optional: Use the Database in Grafana
 
 If you already use Grafana with a SQLite data source/plugin, you can copy the verified database to a machine or container accessible to Grafana and configure the SQLite data source with the file path.
