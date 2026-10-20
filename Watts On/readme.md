@@ -129,7 +129,7 @@ restarting adbd as root
 And `shell id` returned:
 
 ```text
-uid=0(root) gid=0(root)
+uid=0(root) gid=0(root) groups=0(root),1004(input),1007(log),1011(adb),1015(sdcard_rw),1028(sdcard_r),1078(ext_data_rw),1079(ext_obb_rw),3001(net_bt_admin),3002(net_bt),3003(inet),3006(net_bw_stats),3009(readproc),3011(uhid),3012(readtracefs) context=u:r:su:s0
 ```
 
 Do not continue until you have confirmed `uid=0(root)`. Root support depends on the selected emulator image.
