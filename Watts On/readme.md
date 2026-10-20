@@ -20,9 +20,9 @@ Play Store emulator images normally do not allow `adb root`. Google APIs images 
 ## 1. Prerequisites
 
 - Windows with **PowerShell 5.1**.
-- **Android Studio**, Android Emulator, and Android SDK Platform-Tools (`adb.exe`).
-  [Android Studio](https://developer.android.com/studio)
-  [Android SDK Platform-Tools](https://developer.android.com/tools/releases/platform-tools)
+- **Android Studio**, Android Emulator, and Android SDK Platform-Tools (`adb.exe`).  
+  [Android Studio](https://developer.android.com/studio)  
+  [Android SDK Platform-Tools](https://developer.android.com/tools/releases/platform-tools)  
 
 - A Google account for the Play Store.
 - Access to your own **Watts On** account and the relevant utility provider credentials.
