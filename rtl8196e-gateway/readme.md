@@ -70,10 +70,10 @@ The fresh installation successfully produced Lexra GCC 15.2.0 (crosstool-NG 1.28
 
 **Temporary procedure:**  
 Silicon Labs' manual download links
-
-https://www.silabs.com/documents/login/software/slc_cli_linux.zip
-https://www.silabs.com/documents/login/software/SimplicityCommander-Linux.zip
-
+  
+https://www.silabs.com/documents/login/software/slc_cli_linux.zip  
+https://www.silabs.com/documents/login/software/SimplicityCommander-Linux.zip  
+  
 Download the Linux ZIP through the official link in the browser and copy it to the Ubuntu build machine.
 
 ~~~powershell
