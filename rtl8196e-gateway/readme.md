@@ -50,7 +50,7 @@ The move will not survive a reboot.
 
 ## 2. Install Open Linux Firmware and get Zigbee working
 
-1. Flash the Silvercrest with Open Linux Firmware following the upstream [Getting Started guide](https://github.com/jnilo1/rtl8196e-gateway/blob/main/docs/getting-started.md). Follow its safety, backup and recovery instructions.
+1. Flash the Silvercrest with Open Linux Firmware following the [Getting Started guide](https://github.com/jnilo1/rtl8196e-gateway/blob/main/docs/getting-started.md). Follow its safety, backup and recovery instructions.
 2. Flash the EFR32 Zigbee radio following the same guide.
 3. Configure your Zigbee integration to use TCP **8888**, and migrate your Zigbee devices using the procedure appropriate for your current installation.
 4. Verify reliable operation of your Zigbee devices.
@@ -60,7 +60,7 @@ The move will not survive a reboot.
   
 ## 3. Prepare the build environment
 
-1. Follow the upstream [Build Environment README](https://github.com/jnilo1/rtl8196e-gateway/blob/main/1-Build-Environment/README.md#native-setup).  
+1. Follow the [Build Environment README](https://github.com/jnilo1/rtl8196e-gateway/blob/main/1-Build-Environment/README.md#native-setup).  
 2. Confirm network administration and the recovery procedure are available before removing serial console access.  
 
 
