@@ -2,7 +2,9 @@
 
 **README v1 — working draft — 21 October 2026**
 
-This guide adds a separate Thread radio to a Lidl Silvercrest TYGWZ1 / RTL8196E running jnilo1's Open Linux Firmware. The existing EFR32 provides Zigbee on TCP **8888**. An ESP32-H2 running OpenThread RCP firmware uses the freed console UART **ttyS0**, exposed on TCP **8889**. Home Assistant runs OTBR.
+This guide adds a separate Thread radio to a Lidl Silvercrest TYGWZ1 / RTL8196E running jnilo1's Open Linux Firmware. The existing EFR32 provides Zigbee on TCP **8888**.  
+An ESP32-H2 running OpenThread RCP firmware uses the freed console UART **ttyS0**, exposed on TCP **8889**.  
+Home Assistant runs OTBR.
 
 Follow the upstream documentation for standard installation, radio flashing, building and upgrades. This README focuses on the additional changes and their order.
 
@@ -10,39 +12,23 @@ The original target is project release **v4.7.0**, not Linux kernel version 4.7.
   
 ## 1. Prepare an Ubuntu machine or a temporary VM
 
-### Prerequisites
-
-- Ubuntu matching the version supported by the upstream build instructions for the selected revision (currently documented as Ubuntu 22.04).
-- **At least 8 GB RAM.** This is the prerequisite selected for this guide; a successful complete build with 8 GB has not yet been verified. A previous attempt with 4 GB failed with Error 137, whose cause was not confirmed. The next test machine was increased to 16 GB.
-- **100 GB virtual disk.** Verify that the root logical volume/filesystem actually uses the intended capacity; Ubuntu may leave part of the disk unallocated inside LVM.
-- A bridged network adapter on the **same VLAN and IP subnet as the Silvercrest gateway**, with an unused temporary bootloader/TFTP address.
+- Ubuntu matching the version supported by the upstream build instructions for the selected revision (I am running Ubuntu Server 26.04).  
+- At least 8 GB RAM.  
+- Enough disk space to hold all the Build Files, at least 30 GB.  
+- Network adapter on the same IP subnet as the Silvercrest gateway, with an x.x.x.6/24 unused for temporary bootloader/TFTP address.
 - Disk-backed temporary build storage as described below; a small RAM-backed /tmp is insufficient for this setup.
 
-
-If you do not already have a suitable Ubuntu machine on the gateway's network, create a dedicated VM for this project. This keeps the tools in one place and lets you remove the VM when the work is complete. Save your source changes, firmware images and backups elsewhere before deleting it.
-
-Use the Ubuntu version supported by the upstream [Build Environment README](https://github.com/jnilo1/rtl8196e-gateway/blob/main/1-Build-Environment/README.md) for your selected revision, rather than automatically choosing the latest release. The currently documented native build environment uses Ubuntu 22.04.
-
-Configure the VM's network adapter in **bridged mode** and place it on the **same VLAN and IP subnet as the Silvercrest** for the upstream flashing procedure. This provides direct network access for firmware transfers, including TFTP; using NAT alone is not the documented VM setup. Follow the upstream network and firewall prerequisites.
 
 If you use the TTL adapter from inside the VM, pass the USB adapter through to the guest and verify serial access before continuing.
 
 ### Check the actual root filesystem size
 
-A 50 GB virtual disk does not necessarily provide a 50 GB root filesystem. In this installation Ubuntu allocated only 24 GB to the root logical volume. After moving /tmp to disk, the toolchain build filled that filesystem and failed while installing GCC with **No space left on device**. Inode usage was only 50%; the failure was exhausted data space.
-
-Before building, inspect:
-
 ~~~sh
 lsblk
-sudo vgs
-sudo lvs
-df -h / /tmp
 ~~~
 
-If the volume group has unallocated space, extend the root logical volume/filesystem using the appropriate procedure for your layout. If it does not, enlarge the VM disk and storage layers as needed. Do not assume the advertised VM disk size equals available build space. Keep room for source archives, extracted sources, intermediate compiler builds and retained failed attempts. A successful full toolchain build and its peak space usage have not yet been recorded for this setup.
+If the volume group has unallocated space, extend the root logical volume/filesystem using the appropriate procedure for your layout.
 
-Do not retry a build on a full filesystem. Preserve useful logs and source changes before cleaning failed build directories; inspect their sizes and identify each target before deletion.
 
 ### Check temporary build storage
 
@@ -50,140 +36,61 @@ Before starting the upstream build environment installation, check where tempora
 
 ~~~sh
 df -h /tmp
-df -i /tmp
-findmnt -no OPTIONS /tmp
-~~~
-
-Do not assume that /tmp has access to the VM's disk space. In our Ubuntu VM, the root filesystem had 16 GB free, but /tmp was a separate **821 MB tmpfs** with **usrquota** enabled. The toolchain installation failed with:
-
-~~~text
-/tmp/crosstool-ng-install/share/crosstool-ng/scripts/functions: line 300: printf: write error: Disk quota exceeded
-~~~
-
-At the time, /tmp was only 80% full and inode usage was 4%. Per-user quotas can cause a write to fail before the entire filesystem is full; the exact quota limit was not measured in this case.
-
-If /tmp is a small tmpfs, use disk-backed temporary storage for this dedicated build VM. **Wait for the failed installer to stop**, then run:
-
-~~~sh
 sudo mkdir -p /var/tmp/build-tmp
 sudo chmod 1777 /var/tmp/build-tmp
 sudo mount --bind /var/tmp/build-tmp /tmp
 df -h /tmp
 ~~~
 
-Confirm that /tmp now shows the disk-backed filesystem and sufficient free space. Then retry the upstream installation from the repository's 1-Build-Environment directory:
+Confirm that /tmp now shows the disk-backed filesystem and sufficient free space.  
+The move will not survive a reboot.  
 
-~~~sh
-sudo ./install_deps.sh
-~~~
-
-This bind mount is temporary and disappears after reboot. It hides rather than deletes the original tmpfs contents. Apply it while the VM is otherwise idle; existing temporary files become inaccessible through /tmp while the mount is active. If you reboot before building, check /tmp again and reapply the workaround if needed. Verified on a fresh, updated Ubuntu installation: after applying this disk-backed /tmp workaround, sudo ./install_deps.sh completed successfully.
 
 ## 2. Install Open Linux Firmware and get Zigbee working
 
-1. Flash the Silvercrest with Open Linux Firmware following the upstream [Getting Started guide](https://jnilo1.github.io/rtl8196e-gateway/docs/getting-started/). Follow its safety, backup and recovery instructions.
+1. Flash the Silvercrest with Open Linux Firmware following the upstream [Getting Started guide](https://github.com/jnilo1/rtl8196e-gateway/blob/main/docs/getting-started.md). Follow its safety, backup and recovery instructions.
 2. Flash the EFR32 Zigbee radio following the same guide.
 3. Configure your Zigbee integration to use TCP **8888**, and migrate your Zigbee devices using the procedure appropriate for your current installation.
 4. Verify reliable operation of your Zigbee devices.
 5. Keep the console connected through a **3.3 V TTL UART adapter** and confirm that it still works.
 
-**Checkpoint:** A working Linux/Zigbee gateway with a working serial console. Do not connect the H2 yet.
-
+**Checkpoint:** A working Linux/Zigbee gateway with a working serial console.
+  
 ## 3. Prepare the build environment
 
-1. Clone the repository:
+1. Follow the upstream [Build Environment README](https://github.com/jnilo1/rtl8196e-gateway/blob/main/1-Build-Environment/README.md#native-setup).  
+2. Confirm network administration and the recovery procedure are available before removing serial console access.  
 
-~~~sh
-git clone https://github.com/jnilo1/rtl8196e-gateway.git
-cd rtl8196e-gateway
-~~~
-
-2. Select and record the intended release/commit before editing. Do not assume the current main branch matches the installed release.
-3. Follow the upstream [Build Environment README](https://github.com/jnilo1/rtl8196e-gateway/blob/main/1-Build-Environment/README.md), using documentation from your selected revision where available.
-4. Confirm network administration and the recovery procedure are available before removing serial console access.
-
-### Verify the native build environment before editing firmware
-
-After completing upstream [Native setup](https://github.com/jnilo1/rtl8196e-gateway/blob/main/1-Build-Environment/README.md#native-setup), run these checks from the repository root as your normal user. Do not treat the presence of x-tools or a successful fullflash image assembly as proof that the compiler is installed.
-
-#### Check the compiler and binary utilities
-
-~~~sh
-TOOLCHAIN="$PWD/x-tools/mips-lexra-linux-musl/bin"
-export PATH="$TOOLCHAIN:$PATH"
-
-command -v mips-lexra-linux-musl-gcc
-mips-lexra-linux-musl-gcc --version
-mips-lexra-linux-musl-gcc -dumpmachine
-mips-lexra-linux-musl-ld --version
-mips-lexra-linux-musl-objcopy --version
-~~~
-
-Every command must succeed. The target reported by -dumpmachine must be mips-lexra-linux-musl. A directory containing only tools such as as, ld and objcopy is an incomplete installation: GCC must also be present and runnable.
-
-#### Compile and link a small target program
-
-This checks the compiler, assembler, linker and target C library together. It does not validate the complete firmware build or Lexra-specific runtime behavior.
-
-~~~sh
-CHECK_DIR=$(mktemp -d /var/tmp/lexra-check.XXXXXX)
-printf '%s\n' 'int main(void) { return 0; }' > "$CHECK_DIR/check.c"
-
-if mips-lexra-linux-musl-gcc "$CHECK_DIR/check.c" -o "$CHECK_DIR/check"; then
-    mips-lexra-linux-musl-readelf -h "$CHECK_DIR/check"
-    echo "PASS: target program compiled and linked"
-else
-    echo "FAIL: stop and fix the toolchain before continuing"
-fi
-~~~
-
-Expect an ELF32 MIPS executable. Do not run it on the Ubuntu host: it is built for the target architecture. If this fails, stop here. The small test directory is retained for inspection.
-
-#### Check host tools and temporary storage
-
-~~~sh
-for tool in make gcc patch bison flex fakeroot mkfs.jffs2 mksquashfs tftp; do
-    if command -v "$tool" >/dev/null 2>&1; then
-        printf 'OK: %s\n' "$tool"
-    else
-        printf 'MISSING: %s\n' "$tool"
-    fi
-done
-
-df -h /tmp
-df -i /tmp
-~~~
-
-Resolve every missing tool before proceeding. These checks cover the main RTL8196E build/packaging prerequisites; they do not replace upstream's full dependency list. Keep using the disk-backed /tmp arrangement described in step 1 for this VM. The definitive check is a successful source build of the required firmware components.
 
 #### Silicon Labs tools: resolve download failures before declaring setup complete
 
 The fresh installation successfully produced Lexra GCC 15.2.0 (crosstool-NG 1.28.0.3_a3fef85) and the Realtek tools. It then failed downloading slc-cli: the public URL in install_silabs.sh returned HTTP 403 from Akamai. This does not establish the reason for the rejection.
 
-Silicon Labs' [official SLC installation instructions](https://docs.silabs.com/simplicity-studio-5-users-guide/5.10.0/ss-5-users-guide-tools-slc-cli/02-installation) link to a different Linux download path:
+**Temporary procedure:**  
+Silicon Labs' manual download links
 
 https://www.silabs.com/documents/login/software/slc_cli_linux.zip
+https://www.silabs.com/documents/login/software/SimplicityCommander-Linux.zip
 
-**Unresolved download issue:** The official login URL also returned HTTP 403 from curl on Ubuntu, including with an Edge-style User-Agent. Downloading through Edge on Windows succeeded. Changing the User-Agent alone did not resolve the rejection; the roles of cookies, network address, TLS handling or server-side filtering remain unconfirmed. Recheck this issue before declaring the native setup fully reproducible. Do not present a User-Agent override as a verified fix.
-
-**Temporary procedure:** Download the Linux ZIP through the official link in the Windows browser and copy it to the Ubuntu build machine. For example, from Windows PowerShell, replace UBUNTU_IP with the build machine's address:
+Download the Linux ZIP through the official link in the browser and copy it to the Ubuntu build machine.
 
 ~~~powershell
-scp "$env:USERPROFILE\Downloads\slc_cli_linux.zip" sysadmin@UBUNTU_IP:/var/tmp/
+scp "$env:USERPROFILE\Downloads\slc_cli_linux.zip" username@UBUNTU_IP:/home/username/rtl8196e-gateway/silabs-tools
+scp "$env:USERPROFILE\Downloads\SimplicityCommander-Linux.zip" username@UBUNTU_IP:/home/username/rtl8196e-gateway/silabs-tools/Commander.zip
 ~~~
 
 On Ubuntu, validate the copied archive and inspect its top-level paths before installing:
 
 ~~~sh
-unzip -t /var/tmp/slc_cli_linux.zip
-unzip -Z1 /var/tmp/slc_cli_linux.zip | head -20
+cd ~/rtl8196e-gateway/silabs-tools
+unzip -q -o "$SLC_ZIP"
+rm "$SLC_ZIP"
+chmod +x slc_cli/slc
+
+unzip -q commander.zip
+tar xf SimplicityCommander-Linux/Commander_linux_x86_64_*.tar.bz -C .
+rm -rf commander.zip SimplicityCommander-Linux
 ~~~
-
-The ZIP test must pass. Verify the archive layout before extracting it into the project's silabs-tools directory; an HTML login/error response is not a tool archive. The Windows browser download and transfer of the SLC archive were reported; the installer subsequently progressed to the Commander download. The subsequent installer retry finished with SETUP COMPLETE after Commander was installed manually.
-
-The inspected project installer skips its SLC download when silabs-tools/slc_cli/slc already exists. A manual installation must reproduce that expected layout and executable permissions, then the upstream installer must be rerun to finish the remaining Silicon Labs dependencies. Record the SLC version and validate it against the project's SDK requirements before marking this part complete.
-
-**Commander download:** The installer subsequently failed to download Commander as well. The owner downloaded **SimplicityCommander-Linux.zip** on Windows, transferred it to Ubuntu with scp, and extracted it following the commands and expected layout in **1-Build-Environment/12-silabs-toolchain/install_silabs.sh**. Use that script from the selected repository revision as the reference for archive paths and nested extraction; do not assume that simply unzipping the outer archive completes installation. The exact HTTP response for the Commander failure was not captured.
 
 After manually installing the downloaded tools, rerun the installer:
 
@@ -192,52 +99,14 @@ cd ~/rtl8196e-gateway/1-Build-Environment
 sudo ./install_deps.sh
 ~~~
 
-**Confirmed result:** After manually downloading and installing SLC and Commander, the repeated sudo ./install_deps.sh finished with SETUP COMPLETE. The native installer has now completed successfully on the fresh machine. Individual tool checks and firmware builds remain separate validation steps.
+#### Expected result
+=========================================
+  SETUP COMPLETE
+=========================================
 
-EFR32 firmware updates using upstream prebuilt images and rebuilding EFR32 firmware from source are separate workflows. The guide must retain both upstream paths; a successful Linux-only build does not validate the EFR32 toolchain or radio update procedure.
+All tools are ready
 
-#### If the toolchain is incomplete
 
-The observed installation contained binutils but no GCC. The standalone toolchain builder then skipped rebuilding because its destination directory already existed.
-
-1. Confirm GCC is actually missing before moving anything.
-2. Preserve the incomplete directory under another name:
-
-~~~sh
-mv x-tools/mips-lexra-linux-musl \
-   "x-tools/mips-lexra-linux-musl.incomplete-$(date +%Y%m%d-%H%M%S)"
-~~~
-
-3. If ct-ng is not in PATH but the installer placed it under /tmp, check it and expose it to the current shell:
-
-~~~sh
-ls -l /tmp/crosstool-ng-install/bin/ct-ng
-export PATH="/tmp/crosstool-ng-install/bin:$PATH"
-ct-ng version
-~~~
-
-This path is specific to the observed installation and may disappear after reboot. If ct-ng is absent, repair its installation using upstream instructions rather than assuming this PATH change is sufficient.
-
-4. In the observed setup, downloading musl from www.musl-libc.org failed during TLS negotiation. Downloading the same release from musl.libc.org succeeded. If you encounter that same failure, change the project's download mirror:
-
-~~~sh
-sed -i \
-  's|https://www.musl-libc.org/releases|https://musl.libc.org/releases|g' \
-  1-Build-Environment/10-lexra-toolchain/crosstool-ng.config
-~~~
-
-Keep TLS and checksum verification enabled. The alternative musl download succeeded. A later fresh-install run produced working Lexra GCC 15.2.0 and ultimately completed the native installer; whether the mirror change was required in that final run was not recorded.
-
-5. Build the toolchain as your normal user:
-
-~~~sh
-cd 1-Build-Environment/10-lexra-toolchain
-./build_toolchain.sh
-~~~
-
-On failure, inspect build.log in the retained build directory. If another attempt creates an incomplete destination, check it before retrying: the builder may otherwise skip it again. After a successful build, return to the repository root and repeat all checks above.
-
-**Checkpoint:** GCC runs, the target program compiles and links, the required host tools are found, and temporary storage has sufficient space. Only then continue with firmware source edits and compilation.
 
 ## 4. Apply the Linux 6.18 changes
 
@@ -264,12 +133,10 @@ Replace the console boot argument without changing the root filesystem arguments
 
 ~~~sh
 sed -i 's/console=ttyS0,38400/console=null/' "$DTS"
-sed -i '\|^ttyS0::respawn:/sbin/getty -L 38400 ttyS0 vt100$|d' \
-  "$P/33-Rootfs/skeleton/etc/inittab"
+sed -i '\|^ttyS0::respawn:/sbin/getty -L 38400 ttyS0 vt100$|d' "$P/33-Rootfs/skeleton/etc/inittab"
 ~~~
 
-This removes both Linux console use and the login process from ttyS0. It does not silence the bootloader. The recovered 7.2 experiment is not part of this 6.18 procedure.
-
+This removes both Linux console use and the login process from ttyS0. It does not silence the bootloader.
 ### Copy and modify the bridge driver
 
 Retain the original Zigbee bridge and create a separate driver for H2:
@@ -392,19 +259,24 @@ The last command is expected to report differences. New untracked files are not 
 
 ### Build from source before assembling the flash image
 
-**build_fullflash.sh assembles existing component images; it does not compile the modified kernel sources.** The initial attempt ran build_fullflash.sh followed by flash_install_rtl8196e.sh. The new startup script was installed, but the running kernel still had console=ttyS0,38400 and no bridge2 module. Successful image assembly must not be recorded as successful source compilation.
-
-**Mandatory step:** From the repository root, explicitly compile the modified kernel before image assembly and upgrade:
-
 ~~~sh
-BOARD=lidl KERNEL=6.18 ./3-Main-SoC-Realtek-RTL8196E/32-Kernel/build_kernel.sh
+./3-Main-SoC-Realtek-RTL8196E/32-Kernel/build_kernel.sh
 ~~~
 
-This direct kernel build was the missing step in the initial attempts. After compiling the kernel and repeating the full upgrade, both bridges armed successfully on the gateway. Stop on any build error and confirm that the new Lidl kernel image has been written before upgrading. The full image also needs the modified rootfs skeleton and userdata startup script; kernel compilation alone does not install them. Follow the upstream full-upgrade packaging procedure.
 
-Record the build command and git rev-parse HEAD / git describe --tags --always --dirty for reproducibility.
+## 5. Upgrade and verify the freed UART
 
-**Verified upgrade result:** S51uart_bridge2 was installed and executable under /userdata/etc/init.d. The initial failure was therefore not a missing startup script; the running kernel did not contain bridge2.
+### Check the temporary bootloader/TFTP address first
+
+In the upgrade setup used here, the temporary bootloader/TFTP address is **x.x.x.6** on the selected network. This is separate from the gateway's normal Linux address, here x.x.x.251.  
+Confirm the actual bootloader address shown by your installer before proceeding; do not infer it from the Linux address alone.
+
+**The temporary address must be free before the gateway enters bootloader mode.** If another device already uses x.x.x.6, the upgrade can fail or contact the wrong device. Check your DHCP leases/reservations, static-address records and the network itself. A missing ping response alone does not prove the address is unused.
+
+Reserve/exclude the intended address from conflicting assignments, or select another free bootloader address using the options supported by your upstream revision. The inspected installer supports --boot-ip; check its local --help before using it. Keep the build VM on the same VLAN/subnet with bridged networking.
+
+
+Use the [Upgrade guide README](https://github.com/jnilo1/rtl8196e-gateway/blob/main/docs/upgrading.md) as reference, for uploading the new firmware. 
 
 After upgrading, run these checks **on the gateway**:
 
@@ -423,36 +295,19 @@ Confirm the script is executable, console=null is present, bridge2 parameters ex
 After the explicit kernel build and full upgrade, the gateway reported:
 
 ~~~text
-[   13.179440] rtl8196e-uart-bridge: armed on /dev/ttyS1 @ 115200 baud, listening on 0.0.0.0:8888
-[   13.335480] rtl8196e-uart-bridge2: armed on /dev/ttyS0 @ 115200 baud, listening on 0.0.0.0:8889
+dmesg
+[   13.016640] rtl8196e-uart-bridge: armed on /dev/ttyS1 @ 115200 baud, listening on 0.0.0.0:8888
+[   13.086640] rtl8196e-uart-bridge2: armed on /dev/ttyS0 @ 115200 baud, listening on 0.0.0.0:8889
+[   17.557760] rtl8196e-uart-bridge: client connected from HA-Server:42578
 ~~~
 
-This confirms that both drivers initialized and armed with the intended UARTs, baud rate and TCP ports. It does not by itself confirm console removal, Zigbee device communication, H2 RCP communication or Matter operation; verify those separately.
+This confirms that both drivers initialized and armed with the intended UARTs, baud rate and TCP ports.
 
-## 5. Upgrade and verify the freed UART
+1. Keep the TTL adapter connected while verifying the result.
+2. Confirm that the gateway boots and remains accessible over the network.
+3. Verify that Zigbee still works on TCP **8888**.
+4. Observe the serial output during boot and after Linux starts. Confirm that Linux no longer writes console messages and that no login prompt appears. Check the running kernel command line and confirm that getty is absent.
 
-### Check the temporary bootloader/TFTP address first
-
-In the upgrade setup used here, the temporary bootloader/TFTP address is **x.x.x.6** on the selected network. This is separate from the gateway's normal Linux address, here 10.36.5.251. Confirm the actual bootloader address shown by your installer before proceeding; do not infer it from the Linux address alone.
-
-**The temporary address must be free before the gateway enters bootloader mode.** If another device already uses x.x.x.6, the upgrade can fail or contact the wrong device. Check your DHCP leases/reservations, static-address records and the network itself. A missing ping response alone does not prove the address is unused.
-
-Reserve/exclude the intended address from conflicting assignments, or select another free bootloader address using the options supported by your upstream revision. The inspected installer supports --boot-ip; check its local --help before using it. Keep the build VM on the same VLAN/subnet with bridged networking.
-
-
-1. Install the modified firmware using the upstream **Upgrade** procedure/example referenced by the project and build documentation for your selected release.
-2. Keep the TTL adapter connected while verifying the result.
-3. Confirm that the gateway boots and remains accessible over the network.
-4. Verify that Zigbee still works on TCP **8888**.
-5. Observe the serial output during boot and after Linux starts. Confirm that Linux no longer writes console messages and that no login prompt appears. Check the running kernel command line and confirm that getty is absent.
-
-The former console is **ttyS0** (serial UART zero), not Linux's /dev/tty0 virtual terminal.
-
-Some bootloader output may remain before Linux starts: console=null does not change the bootloader. Record any remaining output and assess its effect before connecting the H2. Ongoing Linux messages or a login prompt mean the UART is not ready for RCP traffic.
-
-**Checkpoint:** The modified gateway boots, Zigbee works, and ttyS0 is free of Linux console/getty traffic.
-
-**Not yet recorded:** Exact custom-image filename and upgrade invocation. Use the upstream procedure rather than a guessed flash command.
 
 ## 6. Prepare the ESP32-H2
 
@@ -461,7 +316,9 @@ Some bootloader output may remain before Linux starts: console=null does not cha
 3. Verify the UART pins and serial framing. Keep debug/log output off the RCP transport UART.
 4. Record the board model, example name, SDK version/commit, GPIO assignments and configuration.
 
+
 **Not yet recorded:** Exact example, build/USB flash commands and GPIO numbers. Establish these for the selected board and firmware.
+
 
 **Observed limitation:** 460800 baud caused communication errors in the original setup; 115200 was used instead. The cause is unknown. The existing Zigbee baud rate was also recalled as 115200 but requires verification.
 
@@ -485,6 +342,43 @@ Some bootloader output may remain before Linux starts: console=null does not cha
 The bridge2 driver defaults and S51uart_bridge2 startup script are documented in step 4. After upgrading, verify that the script exists and is executable under /userdata/etc/init.d, then confirm bridge2 is armed and listening on TCP 8889.
 
 Restrict radio ports to trusted local systems and use one active client per radio.
+
+### Wiring diagram and connector pinout
+
+The following pin mapping was confirmed by the owner for the installed gateway and H2 board. Pin numbers in the left column refer to the Silvercrest connector; GPIO23 and GPIO24 refer to ESP32-H2 GPIO numbers.
+
+| Silvercrest connector pin | Signal | ESP32-H2 connection |
+| --- | --- | --- |
+| 1 | 3.3 V VCC | 3V3 |
+| 2 | Ground | GND |
+| 3 | RTL8196E serial TX | GPIO23 — U0RXD |
+| 4 | RTL8196E serial RX | GPIO24 — U0TXD |
+| 5 | EFR32 SWDIO | Not connected |
+| 6 | EFR32 SWCLK | Not connected |
+
+~~~mermaid
+flowchart LR
+    subgraph GW[Silvercrest connector]
+        V["Pin 1 · 3.3 V VCC"]
+        G["Pin 2 · GND"]
+        T["Pin 3 · UART0 TX"]
+        R["Pin 4 · UART0 RX"]
+    end
+    subgraph H2[ESP32-H2]
+        HV["3V3"]
+        HG["GND"]
+        HR["GPIO23 · U0RXD"]
+        HT["GPIO24 · U0TXD"]
+    end
+    V --> HV
+    G --- HG
+    T --> HR
+    HT --> R
+~~~
+
+This is a connection diagram, not a physical connector orientation drawing. Identify pin 1 from the verified board pinout before wiring; do not infer it from the order of boxes or wire colours. Supply the H2 through its 3V3 pin from the gateway's 3.3 V connection in this installation. Avoid simultaneous USB power unless the board's power arrangement has been checked for backfeeding. Pins 5 and 6 remain unconnected. No RTS/CTS connections are used.
+
+**RCP configuration confirmed from the firmware project:** CONFIG_OPENTHREAD_RCP_UART=y, UART port 0, 115200 baud, 8 data bits, no parity, 1 stop bit, and UART_HW_FLOWCTRL_DISABLE. CONFIG_OPENTHREAD_UART_PIN_MANUAL is not set, so the code uses UART_PIN_NO_CHANGE. The GPIO23/RX and GPIO24/TX assignments come from the owner's UART0 pin mapping; the manual-pin Kconfig defaults of RX=4 and TX=5 are inactive.
 
 ### Installation photos
 
