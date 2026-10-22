@@ -101,14 +101,8 @@ cd ~/rtl8196e-gateway/1-Build-Environment
 sudo ./install_deps.sh
 ~~~
 
-#### Expected result
-=========================================
-  SETUP COMPLETE
-=========================================
-
-All tools are ready
-
-
+#### Expected result  
+SETUP COMPLETE - All tools are ready  
 
 ## 4. Apply the Linux 6.18 changes
 
