@@ -2,12 +2,14 @@
 
 **README v1 — working draft — 21 October 2026**
 
-This guide adds a separate Thread radio to a Lidl Silvercrest TYGWZ1 / RTL8196E running jnilo1's Open Linux Firmware. The existing EFR32 provides Zigbee on TCP **8888**.  
+This guide adds a separate Thread radio to a Lidl Silvercrest TYGWZ1 / RTL8196E running jnilo1's Open Linux Firmware.  
+The existing EFR32 provides Zigbee on TCP **8888**.  
+  
 An ESP32-H2 running OpenThread RCP firmware uses the freed console UART **ttyS0**, exposed on TCP **8889**.  
 Home Assistant runs OTBR.
-
+  
 Follow the upstream documentation for standard installation, radio flashing, building and upgrades. This README focuses on the additional changes and their order.
-
+  
 The original target is project release **v4.7.0**, not Linux kernel version 4.7.0. Record the release and commit actually used. Release-specific build and flash commands have not been verified in this draft; links to main may change.  
   
 ## 1. Prepare an Ubuntu machine or a temporary VM
