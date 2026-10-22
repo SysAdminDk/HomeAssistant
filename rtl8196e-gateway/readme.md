@@ -195,7 +195,7 @@ CONFIG_RTL8196E_UART_BRIDGE2=y' \
   "$KERNEL_SRC/config-6.18-realtek.txt"
 ~~~
 
-The original bridge remains enabled. Both bridge2 Makefile entries now use CONFIG_RTL8196E_UART_BRIDGE2. This corrects the recovered implementation, which used the original bridge symbol in both places; the new build has now run on the gateway and both bridges armed successfully.
+The original bridge remains enabled. Both bridge2 Makefile entries now use CONFIG_RTL8196E_UART_BRIDGE2.
 
 ### Create the startup script
 
@@ -238,10 +238,6 @@ The script uses the driver's compiled ttyS0/115200/8889 defaults, disables flow 
 ### Review and compile
 
 ~~~sh
-git diff --check
-git diff -- . ':!*.img'
-git status --short
-
 cat "$BASE/rtl8196e-uart-bridge2/Kconfig"
 cat "$BASE/rtl8196e-uart-bridge2/Makefile"
 sh -n "$INIT/S51uart_bridge2"
@@ -272,7 +268,7 @@ Confirm the actual bootloader address shown by your installer before proceeding;
 Reserve/exclude the intended address from conflicting assignments, or select another free bootloader address using the options supported by your upstream revision. The inspected installer supports --boot-ip; check its local --help before using it. Keep the build VM on the same VLAN/subnet with bridged networking.
 
 
-Use the [Upgrade guide README](https://github.com/jnilo1/rtl8196e-gateway/blob/main/docs/upgrading.md) as reference, for uploading the new firmware. 
+Use the [Upgrade guide README](https://github.com/jnilo1/rtl8196e-gateway/blob/main/docs/upgrading.md) as reference, when uploading the firmware update. 
 
 After upgrading, run these checks **on the gateway**:
 
