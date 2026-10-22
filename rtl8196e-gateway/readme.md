@@ -394,15 +394,16 @@ otbr_log_level: info
 firewall: true
 nat64: false
 beta: false
-network_device: 10.36.5.251:8889
+network_device: x.x.x.x:8889
 ~~~
 
-1. Ensure the gateway has the expected address, here **10.36.5.251**.
-2. Save the configuration and start OTBR.
-3. Check its log for connection to the network RCP and successful radio initialization without repeated resets.
-4. Configure HA's Thread integration and select the intended Thread network.
-5. Test a known Thread device, then repeat after restarting both the gateway and OTBR.
-6. Verify simultaneous Zigbee and Thread operation.
+1. Ensure the gateway has the expected address, here **x.x.x.251**.
+   In my setup the gateway have .251 assigned in the DHCP service.
+3. Save the configuration and start OTBR.
+4. Check its log for connection to the network RCP and successful radio initialization without repeated resets.
+5. Configure HA's Thread integration and select the intended Thread network.
+6. Test a known Thread device, then repeat after restarting both the gateway and OTBR.
+7. Verify simultaneous Zigbee and Thread operation.
 
 /dev/ttyS3 is reproduced from the original HA configuration; it is not the gateway UART. Verify that your installed add-on uses network_device and actually connects to TCP **8889**.
 
